@@ -16,8 +16,7 @@ module Chatgpt::Console
     filename = "#{Time.current.to_i}.txt"
     file_data = ''
     Conversation.all.each do |conversation|
-      data = "\n你: #{conversation.prompt}\nChatGPT: #{conversation.answer}\n"
-      file_data += data
+      file_data += conversation.display
     end
     file_path = "#{dir_path}/#{filename}"
     File.open(file_path, 'w') do |f|
@@ -35,5 +34,6 @@ module Chatgpt::Console
     puts 'con = Conversation.find(id) #查找某个id的conversation 参考active record文档'
     puts 'chathelp #查看此帮助'
     puts 'export #导出本地数据'
+    puts 'con.export #导出某条对话树祖先链全部记录'
   end
 end

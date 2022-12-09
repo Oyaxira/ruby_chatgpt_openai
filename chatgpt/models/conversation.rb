@@ -4,6 +4,9 @@
 # t.string :message_id
 # t.boolean :is_fav
 class Conversation < ActiveRecord::Base
+  has_many :children, class_name: 'Conversation', foreign_key: :parent_id, primary_key: :message_id
+  belongs_to :parent, class_name: 'Conversation', foreign_key: :parent_id, primary_key: :message_id, optional: true
+
   def self.last_message(conversation_id = nil)
     last_message = nil
     if conversation_id
@@ -62,13 +65,36 @@ class Conversation < ActiveRecord::Base
     conversation.answer = message['content']['parts'][0]
     conversation.conversation_id = result['conversation_id']
     conversation.message_id = message['id']
+    conversation.parent_id = message_id
     conversation.save
     conversation.display
     conversation
   end
 
   def display
-    puts "你: #{prompt}"
-    puts "ChatGPT: \n#{answer}"
+    text = "你: #{prompt}\nChatGPT: \n#{answer}\n"
+    puts text
+    text
+  end
+
+  def export
+    dir_path = "#{APP_ROOT}/exports"
+    Dir.mkdir(dir_path) unless Dir.exist?(dir_path)
+    filename = "#{conversation_id}.txt"
+    datas = [self]
+    target = parent
+    until target.blank?
+      datas.push target
+      target = target.parent
+    end
+    file_data = ''
+    datas.reverse.each do |conversation|
+      file_data += conversation.display
+    end
+    file_path = "#{dir_path}/#{filename}"
+    File.open(file_path, 'w') do |f|
+      f.write file_data
+    end
+    puts "文件已经导出至当前目录下exports/#{filename}"
   end
 end
