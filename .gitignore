@@ -3,3 +3,4 @@ logs
 tags/*
 service_cache.yml
 tjjl/*
+exports/*
