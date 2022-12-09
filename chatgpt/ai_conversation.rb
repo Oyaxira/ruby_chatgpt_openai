@@ -3,7 +3,7 @@ class Chatgpt::AiConversation
     SERVICE_CACHE = YAML.load_file "#{APP_ROOT}/config/service_cache.yml"
   rescue StandardError => e
     SERVICE_CACHE = { "cookies": '' }.as_json
-    puts '一次使用请在config/service_cache.yml的cookies中填入网页复制的cookies'
+    puts '第一次使用请在config/service_cache.yml的cookies中填入网页复制的cookies'
     puts '输入exit退出'
     File.open("#{APP_ROOT}/config/service_cache.yml", 'w') do |f|
       f.write SERVICE_CACHE.to_yaml
