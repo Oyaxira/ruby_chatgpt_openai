@@ -39,6 +39,6 @@ con = con.reply '在吗?' #回复这条对话,con对象会变为最新的对话
 con #查看con对象详细信息
 con = Conversation.find(id) #查找某个id的conversation 参考active record文档
 chathelp #查看此帮助
-export #导出本地数据
+export_all #导出本地数据
 con.export #导出某条对话树祖先链全部记录
 ```
