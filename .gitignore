@@ -1,0 +1,5 @@
+logs
+*.sqlite3
+tags/*
+service_cache.yml
+tjjl/*

@@ -1,0 +1,5 @@
+db:
+  adapter: sqlite3
+  database: db/chatgpt.sqlite3
+  pool: 10
+  timeout: 5000
