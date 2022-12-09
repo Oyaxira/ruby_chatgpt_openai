@@ -72,7 +72,7 @@ class Conversation < ActiveRecord::Base
   end
 
   def display
-    text = "你: #{prompt}\nChatGPT: \n#{answer}\n"
+    text = "\n你: #{prompt}\nChatGPT: \n#{answer}\n"
     puts text
     text
   end
