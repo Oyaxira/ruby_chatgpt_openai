@@ -28,7 +28,7 @@ class Chatgpt::AiConversation
         "cache-control": 'no-cache',
         "content-type": 'application/json',
         "pragma": 'no-cache',
-        "cookie": parse_hash_to_cookie,
+        "cookies": SERVICE_CACHE['cookie_data'],
         "dnt": 1,
         "referer": 'https://chat.openai.com/chat',
         "origin": 'https://chat.openai.com',
@@ -93,15 +93,6 @@ class Chatgpt::AiConversation
       end
       SERVICE_CACHE['cookie_data'] = cookies
       save_service_cache
-    end
-
-    def parse_hash_to_cookie
-      data = SERVICE_CACHE['cookie_data']
-      cookie = ''
-      data.each do |k, v|
-        cookie += "#{k}=#{v};"
-      end
-      cookie
     end
   end
 end
