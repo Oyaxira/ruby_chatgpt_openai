@@ -2,7 +2,7 @@ class Chatgpt::AiConversation
   begin
     SERVICE_CACHE = YAML.load_file "#{APP_ROOT}/config/service_cache.yml"
   rescue StandardError => e
-    SERVICE_CACHE = { "cookies": '', "user_agent": ''}.as_json
+    SERVICE_CACHE = { "cookies": '', "user_agent": '' }.as_json
     puts '第一次使用请在config/service_cache.yml的cookies中填入网页复制的cookies'
     puts '输入exit退出'
     File.open("#{APP_ROOT}/config/service_cache.yml", 'w') do |f|
@@ -28,7 +28,7 @@ class Chatgpt::AiConversation
         "cache-control": 'no-cache',
         "content-type": 'application/json',
         "pragma": 'no-cache',
-        "cookie": SERVICE_CACHE['cookie_data'],
+        "cookie": parse_hash_to_cookie,
         "dnt": 1,
         "referer": 'https://chat.openai.com/chat',
         "origin": 'https://chat.openai.com',
@@ -50,7 +50,7 @@ class Chatgpt::AiConversation
         "cache-control": 'no-cache',
         "content-type": 'application/json',
         "pragma": 'no-cache',
-        "cookies": parse_hash_to_cookie,
+        "cookies": SERVICE_CACHE['cookie_data'],
         "dnt": 1,
         "referer": 'https://chat.openai.com/chat',
         "sec-ch-ua": '"Not?A_Brand";v="8", "Chromium";v="108", "Google Chrome";v="108"',
