@@ -2,7 +2,7 @@ class Chatgpt::AiConversation
   begin
     SERVICE_CACHE = YAML.load_file "#{APP_ROOT}/config/service_cache.yml"
   rescue StandardError => e
-    SERVICE_CACHE = { "cookies": '' }.as_json
+    SERVICE_CACHE = { "cookies": '', "user_agent": ''}.as_json
     puts '第一次使用请在config/service_cache.yml的cookies中填入网页复制的cookies'
     puts '输入exit退出'
     File.open("#{APP_ROOT}/config/service_cache.yml", 'w') do |f|
@@ -50,7 +50,7 @@ class Chatgpt::AiConversation
         "cache-control": 'no-cache',
         "content-type": 'application/json',
         "pragma": 'no-cache',
-        "cookies": SERVICE_CACHE['cookie_data'],
+        "cookies": parse_hash_to_cookie,
         "dnt": 1,
         "referer": 'https://chat.openai.com/chat',
         "sec-ch-ua": '"Not?A_Brand";v="8", "Chromium";v="108", "Google Chrome";v="108"',
@@ -59,7 +59,8 @@ class Chatgpt::AiConversation
         "sec-fetch-dest": 'empty',
         "sec-fetch-mode": 'cors',
         "sec-fetch-site": 'same-origin',
-        "user-agent": 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36'
+        "user-agent": SERVICE_CACHE['user_agent'] ||
+                      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36'
       }
       response = RestClient.get('https://chat.openai.com/api/auth/session', header)
       SERVICE_CACHE['cookie_data'] = response.cookies
@@ -92,6 +93,15 @@ class Chatgpt::AiConversation
       end
       SERVICE_CACHE['cookie_data'] = cookies
       save_service_cache
+    end
+
+    def parse_hash_to_cookie
+      data = SERVICE_CACHE['cookie_data']
+      cookie = ''
+      data.each do |k, v|
+        cookie += "#{k}=#{v};"
+      end
+      cookie
     end
   end
 end
