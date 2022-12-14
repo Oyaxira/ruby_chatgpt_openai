@@ -34,6 +34,30 @@ module Chatgpt::Console
     puts 'con = Conversation.find(id) #查找某个id的conversation 参考active record文档'
     puts 'chathelp #查看此帮助'
     puts 'export_all #导出本地数据'
+    puts 'flash_cf_clearance #刷新cf_clearance'
     puts 'con.export #导出某条对话树祖先链全部记录'
+  end
+
+  def flash_cf_clearance(options: nil)
+    url = 'https://chat.openai.com/chat'
+    browser = Chatgpt::Chrome.new(options: options)
+    cf_clearance = nil
+    while cf_clearance.blank?
+      browser.get(url)
+      count = 0
+      while count < 16 && cf_clearance.blank?
+        count += 5
+        sleep(count)
+        cookies = browser.manage.all_cookies
+        cc = cookies.find { |cookie| cookie[:name] == 'cf_clearance' } || {}
+        cf_clearance = cc[:value]
+      end
+    end
+    browser.quit
+    Chatgpt::AiConversation::SERVICE_CACHE['cf_clearance'] = cf_clearance
+    File.open("#{APP_ROOT}/config/service_cache.yml", 'w') do |f|
+      f.write Chatgpt::AiConversation::SERVICE_CACHE.to_yaml
+    end
+    puts "cf_clearance: #{cf_clearance}\n刷新成功\n"
   end
 end

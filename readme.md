@@ -40,6 +40,8 @@ bundle exec rake db:migrate
 ###### chrome f12查看请求直接复制cookies后就可本地使用
 ###### 数据只有你自己本地和openai知道(
 
+###### Chatgpt::Chrome.new ruby版本的undetected_chromedriver,用于过cf的检测,通过率90%
+
 ```ruby
 con = first_call '你好' #进行第一次会话
 con = last #最近的一挑会话数据
@@ -49,5 +51,6 @@ con #查看con对象详细信息
 con = Conversation.find(id) #查找某个id的conversation 参考active record文档
 chathelp #查看此帮助
 export_all #导出本地数据
+flash_cf_clearance #刷新cf_clearance
 con.export #导出某条对话树祖先链全部记录
 ```
