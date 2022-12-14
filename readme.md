@@ -42,6 +42,8 @@ bundle exec rake db:migrate
 
 ###### Chatgpt::Chrome.new ruby版本的undetected_chromedriver,用于过cf的检测,通过率90%
 
+[undetected_chromedriver过验证逻辑完全借鉴参考py版本](https://github.com/ultrafunkamsterdam/undetected-chromedriver)
+
 ```ruby
 con = first_call '你好' #进行第一次会话
 con = last #最近的一挑会话数据
