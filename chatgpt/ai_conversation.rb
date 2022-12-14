@@ -79,10 +79,42 @@ class Chatgpt::AiConversation
     end
 
     def get_reply(body)
-      response = RestClient.post('https://chat.openai.com/backend-api/conversation', body.to_json, get_header)
-      final_data = response.body.split("\n\n")[-2]
-      final_data = final_data.gsub(/^data: /, '')
-      result = JSON.parse(final_data)
+      final_data = nil
+      block = proc { |response|
+        case response.code
+        when '200'
+          buffer = ''
+          response.read_body do |chunk|
+            buffer += chunk
+            while index = buffer.index(/\r\n\r\n|\n\n/)
+              stream = buffer.slice!(0..index)
+              data = ''
+              name = nil
+              stream.split(/\r?\n/).each do |part|
+                /^data:(.+)$/.match(part) do |m|
+                  data += m[1].strip
+                  data += "\n"
+                end
+              end
+              begin
+                final_data = JSON.parse(data)
+              rescue StandardError => e
+              end
+            end
+          end
+        else
+          raise response if final_data.nil?
+
+          return
+        end
+      }
+      begin
+        RestClient::Request.execute(url: 'https://chat.openai.com/backend-api/conversation', payload: body.to_json, method: :POST,
+                                    headers: get_header, block_response: block)
+      rescue StandardError => e
+        raise e if final_data.nil?
+      end
+      final_data
     end
 
     def parse_origin_cookies
