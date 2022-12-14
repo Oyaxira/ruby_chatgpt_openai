@@ -4,3 +4,4 @@ tags/*
 service_cache.yml
 tjjl/*
 exports/*
+test.py
